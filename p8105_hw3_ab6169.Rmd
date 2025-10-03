@@ -1,0 +1,23 @@
+---
+title: "p8105_hw3_ab6169"
+author: "Amrutha Banda"
+date: "2025-10-03"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+## Problem 1 
+```{r}
+library(p8105.datasets)
+data("instacart")
+```
+
+
+## Problem 2 
+
+
+## Problem 3 
