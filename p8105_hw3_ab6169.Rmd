@@ -51,6 +51,17 @@ instacart |>
   knitr::kable(digits = 0)
 ```
 
+Table of Mean Hour of the Day
+
+```{r}
+instacart |> 
+  filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) |> 
+  group_by(product_name, order_dow) |> 
+  summarize(mean_hour = mean(order_hour_of_day)) |> 
+  pivot_wider(
+    names_from = order_dow,
+    values_from = mean_hour )
+```
 
 ## Problem 2 
 
