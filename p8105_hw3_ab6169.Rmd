@@ -16,6 +16,8 @@ library(p8105.datasets)
 data("instacart")
 ```
 
+Short Description: 
+
 ```{r}
 aisles_summary= 
   instacart |> 
@@ -24,6 +26,9 @@ aisles_summary=
 aisles_summary |> 
   head(10) #This gives me a table that shows me top 10 aisles with the most ordered items 
 ```
+Comments: 
+
+
 
 Making a Plot n>10,000
 ```{r}
@@ -39,6 +44,9 @@ aisles_summary |>
     y = "Number of Items Ordered"
   )
 ```
+Comments: 
+
+
 
 Table of 3 most popular items 
 ```{r}
@@ -50,18 +58,32 @@ instacart |>
   slice_max(order_by = n, n = 3) |> 
   knitr::kable(digits = 0)
 ```
+Comments: 
+
+
 
 Table of Mean Hour of the Day
-
 ```{r}
 instacart |> 
   filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) |> 
   group_by(product_name, order_dow) |> 
   summarize(mean_hour = mean(order_hour_of_day)) |> 
+  mutate(order_dow = recode(order_dow,
+  `0` = "Sun",
+  `1` = "Mon", 
+  `2` = "Tue",
+  `3` = "Wed",
+  `4` = "Thu", 
+  `5` = "Fri",
+  `6` = "Sat")) |> 
   pivot_wider(
     names_from = order_dow,
-    values_from = mean_hour )
+    values_from = mean_hour ) |> 
+  knitr::kable(digits=2) 
+               
 ```
+Comments: 
+
 
 ## Problem 2 
 
