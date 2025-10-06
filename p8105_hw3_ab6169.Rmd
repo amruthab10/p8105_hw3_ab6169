@@ -44,9 +44,10 @@ Table of 3 most popular items
 ```{r}
 instacart |> 
   filter(aisle %in% 
-    c("baking ingredients", "dog food care", "packaged vegetables   fruits")) |> 
+    c("baking ingredients", "dog food care", "packaged vegetables fruits")) |> 
   group_by(aisle, product_name) |>
   summarize(n = n()) |> 
+  slice_max(order_by = n, n = 3) |> 
   knitr::kable(digits = 0)
 ```
 
