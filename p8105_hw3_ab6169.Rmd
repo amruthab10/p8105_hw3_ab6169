@@ -25,7 +25,7 @@ aisles_summary |>
   head(10) #This gives me a table that shows me top 10 aisles with the most ordered items 
 ```
 
-Making a Plot 
+Making a Plot n>10,000
 ```{r}
 aisles_summary |> 
   filter(n > 10000) |> 
@@ -40,8 +40,16 @@ aisles_summary |>
   )
 ```
 
-
 Table of 3 most popular items 
+```{r}
+instacart |> 
+  filter(aisle %in% 
+    c("baking ingredients", "dog food care", "packaged vegetables   fruits")) |> 
+  group_by(aisle, product_name) |>
+  summarize(n = n()) |> 
+  knitr::kable(digits = 0)
+```
+
 
 ## Problem 2 
 
