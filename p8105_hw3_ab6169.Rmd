@@ -25,6 +25,24 @@ aisles_summary |>
   head(10) #This gives me a table that shows me top 10 aisles with the most ordered items 
 ```
 
+Making a Plot 
+```{r}
+aisles_summary |> 
+  filter(n > 10000) |> 
+  mutate(aisle = fct_reorder(aisle, n)) |> #shows me aisles based on n (size)
+  ggplot(aes(x = aisle, y = n, fill = aisle)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() ##flips the long aisle names
+  labs(
+    title = "Number of Items Ordered by Aisle (>10,000 orders)",
+    x = "Aisle",
+    y = "Number of Items Ordered"
+  )
+```
+
+
+Table of 3 most popular items 
+
 ## Problem 2 
 
 
