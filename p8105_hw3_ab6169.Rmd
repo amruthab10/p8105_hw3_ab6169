@@ -16,6 +16,14 @@ library(p8105.datasets)
 data("instacart")
 ```
 
+```{r}
+aisles_summary= 
+  instacart |> 
+  count(aisle, sort=TRUE)
+
+aisles_summary |> 
+  head(10) #This gives me a table that shows me top 10 aisles with the most ordered items 
+```
 
 ## Problem 2 
 
