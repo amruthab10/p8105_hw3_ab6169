@@ -8,6 +8,8 @@ output: github_document
 ```{r}
 library(tidyverse)
 library(janitor)
+library(lubridate)
+
 ```
 
 ## Problem 1 
@@ -91,13 +93,14 @@ Cleaning
 ```{r}
 
 zipcodes_df= 
-  read_csv("data/zipcodes.csv", na = c("NA", ".", "")) |> 
-  janitor:: clean_names() 
+  read_csv("data/zipcodes.csv", na = c("NA", ".", "")) |>
+  janitor::clean_names() |> 
+  select(-state_fips, -file_date) 
 
 zori_df = 
   read_csv("data/zori.csv", na = c("NA", ".", "")) |> 
-  janitor:: clean_names() |>  
-    pivot_longer(
+  janitor::clean_names() |> 
+  pivot_longer(
     cols = starts_with("x20"),
     names_to = "date",
     values_to = "zori"
@@ -109,32 +112,15 @@ zori_df =
   select(-city, -metro, -region_type, -state_name, -state, ) |> 
   mutate(date = sub("^x", "", date))
 
+#Joined DataFrame
+mergezip_df=
+  left_join(zipcodes_df, zori_df, by = c("zip_code","county")) 
 ```
 
 
-Counting Zip code observations
 ```{r}
-zip_obs = 
-  zori_df |>
-  group_by(zip_code) |>
-  summarize(n_months = n_distinct(date), 
-  .groups = "drop")
-
-n_full = sum(zip_obs$n_months == 116)
-n_under10 = sum(zip_obs$n_months < 10)
-
-  
+mergezip_df = 
+  mergezip_df |> 
+  mutate(year = as.numeric(substr(date, 1, 4)))
 ```
 
-`r n_full` zipcodes are observed 116 times. `r n_under10 ` zipcodes are observed under 10 times. Some zipcodes are observed rarely due to having limited rental listings or being in areas that are less populated. Meanwhile, other zipcodes are shown to be observed  each month because of being in high-volume areas that are tracked by Zillow consistently.
-
-
-Reader Friendly Table 
-```{r}
-
-```
-
-There are 
-
-
-## Problem 3 
