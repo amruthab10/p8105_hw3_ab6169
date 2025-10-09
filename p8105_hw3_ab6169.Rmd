@@ -89,13 +89,19 @@ Comments:
 
 ## Problem 2 
 
-Cleaning
 ```{r}
-
 zipcodes_df= 
   read_csv("data/zipcodes.csv", na = c("NA", ".", "")) |>
   janitor::clean_names() |> 
-  select(-state_fips, -file_date) 
+  select(-state_fips, -file_date) |> 
+  mutate(
+    borough=recode(county,
+          "Kings"= "Brooklyn",
+          "New York"= "Manhattan",
+          "Richmond"= "Staten Island") 
+  ) |> 
+  select(borough, county, zip_code, neighborhood)
+
 
 zori_df = 
   read_csv("data/zori.csv", na = c("NA", ".", "")) |> 
@@ -114,13 +120,38 @@ zori_df =
 
 #Joined DataFrame
 mergezip_df=
-  left_join(zipcodes_df, zori_df, by = c("zip_code","county")) 
+  left_join(zipcodes_df, zori_df, by = c("zip_code","county"))
 ```
 
 
 ```{r}
+##Made a column for just year 
 mergezip_df = 
   mergezip_df |> 
   mutate(year = as.numeric(substr(date, 1, 4)))
+```
+
+
+```{r}
+borough_year_df = 
+  mergezip_df |> 
+  group_by(borough, year) |> 
+  summarize(
+    mean_zori = mean(zori, na.rm = TRUE),
+    .groups = "drop"
+  ) |> 
+  arrange(borough, year)
+
+
+```
+
+
+Reader Friendly Table 
+```{r}
+borough_year_df |> 
+  knitr::kable(
+    digits = 0,
+    col.names = c("Borough", "Year", "Average ZORI (USD)")
+  )
 ```
 
