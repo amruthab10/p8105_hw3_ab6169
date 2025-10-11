@@ -11,6 +11,7 @@ library(janitor)
 library(ggplot2)
 library(patchwork)
 library(knitr)
+library(dplyr)
 
 ```
 
@@ -223,12 +224,13 @@ plot_zip2023 =
 
 
 Combining the two previous plots 
-```{r}
+```{r warning=FALSE, message=FALSE}
 combined_plot= 
   (plot_comparison / plot_zip2023) + plot_annotation(
     title = "NYC Rental Price Trends and 2023 Borough Distributions",
     caption = "Top: 2015–2024 trends; Bottom: 2023 ZIP-level rent distributions"
   )
+combined_plot
 
 ggsave("results/nyc_rental_summary.png", combined_plot,
        width = 10, height = 10, units = "in")
@@ -330,6 +332,7 @@ plot_age_dist =
     plot.title = element_text(face = "bold")
   )
 
+plot_age_dist
 ```
 Comments: 
 
@@ -338,7 +341,7 @@ Within each education category, the age patterns for men and women are similar, 
 
 
 Introducing Total Activity Variable
-```{r}
+```{r message=FALSE}
 
 ##Aggregated Data With Total Activity Variable
 total_activity_df =
@@ -351,7 +354,8 @@ total_activity_df =
 
 Plot: Total Activities vs. Age
 
-```{r}
+```{r message=FALSE}
+
 plot_total_activity =
   total_activity_df |> 
   ggplot(aes(x = age, y = total_activity, color = sex)) +
@@ -360,13 +364,46 @@ plot_total_activity =
   facet_wrap(~ education) +
   labs(
     title = "Total Daily Activity vs Age by Education Level",
-    subtitle = "Each point represents one participant; smooth lines show trends by sex",
+    subtitle = "Each point represents one participant.Smooth lines show trends by sex",
     x = "Age (years)",
     y = "Total Activity (Sum of MIMS)",
     color = "Sex")+
   viridis::scale_color_viridis(discrete = TRUE) +
   theme_minimal(base_size = 12) +
   theme(legend.position = "bottom")
+
+plot_total_activity
 ```
 Comments: 
 The plot shows how total daily activity varies with age and education level for men and women. Among participants with less than a high school education, males generally have slightly higher total activity than females across most ages. But, both groups show a gradual decline in activity with age. For those with a high school equivalent or more than high-school education, females showcase higher total activity than males. The female lines remain consistently above the male lines in these two panels. This suggests to me that there is greater daily movement among more educated women.
+
+
+3 panel plot
+```{r}
+activity_timecourse_df =
+  nhanes_merged |> 
+  group_by(minute, sex, education) |> 
+  summarize(
+    mean_mims = mean(mims, na.rm = TRUE))
+
+
+  activity_timecourse_df |> 
+  ggplot(aes(x = minute, y = mean_mims, color = sex)) +
+  geom_line(linewidth = 1.1, alpha = 0.8) +
+  geom_smooth(se = FALSE, linewidth = 1.3, linetype = "dashed") +
+  facet_wrap(~ education) +
+  labs(
+    title = "24-Hour Activity Time Course by Education Level",
+    subtitle = "Average MIMS values across minutes of the day, separated by sex and education",
+    x = "Minute of the Day (0–1440)",
+    y = "Average Activity (MIMS)",
+    color = "Sex") +
+  viridis::scale_color_viridis(discrete = TRUE, option = "D") +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 14))
+```
+Comments: 
+
+This plot shows daily patterns across all education levels. Activity levels are lowest during nighttime hours, such as 0–400 and 1200–1440. I see that activity peaks in the morning and also the afternoon. Across all three panels, I can see that men and females follow similar daily patterns, but there are some minor differences. In the less than high school group, I observed that men show slightly higher early morning peaks. Meanwhile, in the high school equivalent and more than high school groups, women display higher afternoon activity levels. 
