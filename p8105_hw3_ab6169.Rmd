@@ -251,7 +251,20 @@ nhanes_covar=
   read.csv("data/nhanes_covar.csv", skip=4, na = c("NA", ".", "")) |> 
   janitor::clean_names() |> 
   drop_na() |> 
-  filter(age>= 21)
+  filter(age>= 21) |> 
+  mutate(
+    sex = recode(sex, "1" = "Male", "2" = "Female"),
+    education = recode(education,
+      "1" = "Less than High School",
+      "2" = "High School Equivalent",
+      "3" = "More than High School"),
+      sex = factor(sex), 
+    education = factor(education, 
+                       levels = c("Less than High School", 
+                                  "High School Equivalent", 
+                                  "More than High School")))
+
+      
 
 
   
