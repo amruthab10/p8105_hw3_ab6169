@@ -10,6 +10,7 @@ library(tidyverse)
 library(janitor)
 library(ggplot2)
 library(patchwork)
+library(knitr)
 
 ```
 
@@ -192,9 +193,7 @@ Plot: distribution of ZIP-code-level rental prices across boroughs
   filter(year == 2023) |>                
   group_by(borough, zip_code) |>         
   summarize(
-    mean_zori = mean(zori, na.rm = TRUE),
-    .groups = "drop"
-  )
+    mean_zori = mean(zori, na.rm = TRUE))
 ```
 
 ```{r}
@@ -289,5 +288,17 @@ Merged Dataset
 ```{r}
 nhanes_merged = 
   left_join(nhanes_covar, nhanes_accel_long, by = "seqn")
+```
+
+Reader Friendly Table: Men and Women in Education Category
+```{r}
+sex_edu_table =
+  nhanes_covar |> 
+  group_by(education, sex) |> 
+  summarize(count = n()) |> 
+  pivot_wider(
+    names_from = sex,
+    values_from = count
+  )
 ```
 
