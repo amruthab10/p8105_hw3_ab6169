@@ -240,9 +240,22 @@ ggsave("results/nyc_rental_summary.png", combined_plot,
 
 Cleaning and Tidying Data
 ```{r}
+
 nhanes_accel= 
   read.csv("data/nhanes_accel.csv", na = c("NA", ".", "")) |> 
   janitor::clean_names()
+
+##Pivoted Longer
+nhanes_accel_long = 
+  nhanes_accel |> 
+  pivot_longer(
+    cols = starts_with("min"), 
+    names_to = "minute", 
+    values_to = "mims") |> 
+  mutate(
+    minute = as.numeric(str_remove(minute, "min")))
+
+  
   
 ```
 
@@ -269,5 +282,12 @@ nhanes_covar=
 
   
  
+```
+
+
+Merged Dataset
+```{r}
+nhanes_merged = 
+  left_join(nhanes_covar, nhanes_accel_long, by = "seqn")
 ```
 
