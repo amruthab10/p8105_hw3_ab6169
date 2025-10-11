@@ -300,5 +300,39 @@ sex_edu_table =
     names_from = sex,
     values_from = count
   )
+
+knitr::kable(
+  sex_edu_table,
+  caption = "Number of Men and Women in Each Education Category",
+  col.names = c("Education Level", "Men", "Women")
+)
 ```
+Comments: 
+
+The table shows roughly similar counts of men and women within each education category. There are 12 more women than men in the "High School Equivalent" category. There are slightly more participants in the “More than High School” group.
+
+
+Plot: Age Distributions for Men and Women in Each Education Category
+```{r}
+plot_age_dist =
+  nhanes_covar |> 
+  ggplot(aes(x = age, fill = sex)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ education) +
+  labs(
+    title = "Age Distributions by Sex and Education Level",
+    x = "Age (years)",
+    y = "Density",
+    fill = "Sex"
+  ) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold")
+  )
+
+```
+Comments: 
+
+The age distributions show that participants with higher education levels tend to be older on average.
+Within each education category, the age patterns for men and women are similar, but women appear slightly more represented among older age groups in the “More than High School” panel.
 
